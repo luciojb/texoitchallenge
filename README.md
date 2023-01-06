@@ -9,8 +9,7 @@ There is no need for configuration, just running the application should be enoug
 It uses an H2 in-memory database, which is populated by the CSVLoader (Application Runner) that starts before the webservice is up and reads the CSV file called
 movielist.csv under the `main/resources` package, populating the H2 database with its data.
 
-If you want custom CSVs to be read then you can add the file to that package before packaging the application and run with the command example under the next __
-Run__ section.
+If you want custom CSVs to be read then you can add the file to that package before packaging the application and run with the command example under the next __Run__ section.
 
 It is a Spring Boot application and uses *Maven* for dependency management and packaging. It is developed using __Java 17__ by *Azul Zulu Community*, so be sure
 your `$JAVA_HOME` is using the 17th version too. If you want to check if maven is using java 17, try
