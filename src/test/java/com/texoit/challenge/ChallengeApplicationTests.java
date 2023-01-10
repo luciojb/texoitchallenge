@@ -99,24 +99,16 @@ class ChallengeApplicationTests {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.min").isArray())
         .andExpect(jsonPath("$.min").isNotEmpty())
-        .andExpect(jsonPath("$.min.[0].producer").isNotEmpty())
-        .andExpect(jsonPath("$.min.[0].producer").isString())
-        .andExpect(jsonPath("$.min.[0].interval").isNotEmpty())
-        .andExpect(jsonPath("$.min.[0].interval").isNumber())
-        .andExpect(jsonPath("$.min.[0].previousWin").isNotEmpty())
-        .andExpect(jsonPath("$.min.[0].previousWin").isNumber())
-        .andExpect(jsonPath("$.min.[0].followingWin").isNotEmpty())
-        .andExpect(jsonPath("$.min.[0].followingWin").isNumber())
+        .andExpect(jsonPath("$.min.[0].producer").value("Joel Silver"))
+        .andExpect(jsonPath("$.min.[0].interval").value(1))
+        .andExpect(jsonPath("$.min.[0].previousWin").value(1990))
+        .andExpect(jsonPath("$.min.[0].followingWin").value(1991))
         .andExpect(jsonPath("$.max").isArray())
         .andExpect(jsonPath("$.max").isNotEmpty())
-        .andExpect(jsonPath("$.max.[0].producer").isNotEmpty())
-        .andExpect(jsonPath("$.max.[0].producer").isString())
-        .andExpect(jsonPath("$.max.[0].interval").isNotEmpty())
-        .andExpect(jsonPath("$.max.[0].interval").isNumber())
-        .andExpect(jsonPath("$.max.[0].previousWin").isNotEmpty())
-        .andExpect(jsonPath("$.max.[0].previousWin").isNumber())
-        .andExpect(jsonPath("$.max.[0].followingWin").isNotEmpty())
-        .andExpect(jsonPath("$.max.[0].followingWin").isNumber());
+        .andExpect(jsonPath("$.max.[0].producer").value("Matthew Vaughn"))
+        .andExpect(jsonPath("$.max.[0].interval").value(13))
+        .andExpect(jsonPath("$.max.[0].previousWin").value(2002))
+        .andExpect(jsonPath("$.max.[0].followingWin").value(2015));
   }
 
 }

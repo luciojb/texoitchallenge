@@ -7,8 +7,11 @@ import com.texoit.challenge.model.http.AwardsIntervalResponse;
 import com.texoit.challenge.repository.MovieRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,34 +62,35 @@ public class MovieService {
         )
         .flatMap(Stream::distinct)
         .collect(Collectors.toList());
-    List<WinnerInterval> maxIntervals = new ArrayList<>();
-    List<WinnerInterval> minIntervals = new ArrayList<>();
+    List<WinnerInterval> intervals = new ArrayList<>();
     prods.stream().map(MovieProducerWinner::getProducer).distinct().forEach(p -> {
       var mvs = prods.stream().filter(m -> m.getProducer().equals(p)).collect(Collectors.toList());
-      int biggestInterval = 0;
-      int minInterval = 0;
-      WinnerInterval maxWit = null;
-      WinnerInterval minWit = null;
-      int currInterval;
+
       if (mvs.size() > 1) {
         for (int i = 1; i < mvs.size(); i++) {
-          currInterval = mvs.get(i).getYear() - mvs.get(i - 1).getYear();
-          if (biggestInterval == 0 || currInterval > biggestInterval) {
-            biggestInterval = currInterval;
-            maxWit = new WinnerInterval(mvs.get(i).getProducer(), biggestInterval, mvs.get(i - 1).getYear(), mvs.get(i).getYear());
-          }
-          if (minInterval == 0 || currInterval < minInterval) {
-            minInterval = currInterval;
-            minWit = new WinnerInterval(mvs.get(i).getProducer(), minInterval, mvs.get(i - 1).getYear(), mvs.get(i).getYear());
-          }
+          intervals.add(new WinnerInterval(
+              mvs.get(i).getProducer(),
+              mvs.get(i).getYear() - mvs.get(i - 1).getYear(),
+              mvs.get(i - 1).getYear(),
+              mvs.get(i).getYear()
+          ));
         }
-        maxIntervals.add(maxWit);
-        minIntervals.add(minWit);
-
       }
     });
 
-    return new AwardsIntervalResponse(maxIntervals, minIntervals);
+    AtomicReference<Integer> maxInterval = new AtomicReference<>(0);
+    intervals.stream().max(Comparator.comparingInt(WinnerInterval::getInterval)).ifPresent(i -> maxInterval.set(i.getInterval()));
+    AtomicReference<Integer> minInterval = new AtomicReference<>(0);
+    intervals.stream().min(Comparator.comparingInt(WinnerInterval::getInterval)).ifPresent(i -> minInterval.set(i.getInterval()));
+    List<WinnerInterval> max = intervals
+        .stream()
+        .filter(x -> Objects.equals(x.getInterval(), maxInterval.get()))
+        .collect(Collectors.toList());
+    List<WinnerInterval> min = intervals
+        .stream()
+        .filter(x -> Objects.equals(x.getInterval(), minInterval.get()))
+        .collect(Collectors.toList());
+    return new AwardsIntervalResponse(max, min);
   }
 
 
